@@ -1,5 +1,15 @@
-**pcap_test**
+**netfilter_test**
 -------------
+
+### Usage.
+
+```
+ex)
+# iptables -A INPUT -j NFQUEUE
+# iptables -A OUTPUT -j NFQUEUE
+# ./netfilter_test
+```
+
 
 ### Install the library.
 
@@ -26,3 +36,26 @@ ex)
 > 		# cd libnet/include/libnet
 > 		# mv libnet-macros.h libnet-headers.h /usr/include/libnet
 > 		# mv ../win32/config.h /usr/include/win32
+
+
+### Download the Glog.
+
+> - **Cloning a Git repository.**
+>
+> 		# git clone https://github.com/google/glog.git
+> - **Change from the directory.**
+>
+> 		# cd glog
+> - **Install.**  
+> ※ See INSTALL for (generic) installation instructions for C++: basically.
+>
+> 		# ./autogen.sh && ./configure && make && make install
+> 		# ldconfig
+> - **Error during installation.**
+>   * **autoreconf: not found.**
+>
+>		  # apt install autoconf
+>   * **libtoolize is needed because this package uses Libtool.**
+>
+>		  # apt install libtool
+

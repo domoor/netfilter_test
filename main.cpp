@@ -21,23 +21,7 @@
 
 void dump(uint8_t *pkt, uint32_t total){
     int i;
-//    DLOG(INFO) << "this is info logging";
-//    DLOG(INFO) << "Found cookies";
-    // 로그 출력
-//    LOG( INFO ) << "this is info logging";
-//    LOG( WARNING ) << "this is warning logging";
-    // Debug Mode 로깅
-//    DLOG(INFO) << "this is debuging info logging";
-//    DLOG(DEBUG) << IF_DEBUG_MODE << cout << "\n1\n";
-//   IF_DEBUG_MODE( cout<<endl<<endl<<"1\n\n"; );
-
-//    IF_DEBUG_MODE( string error; );
-//    DCHECK(Foo(&error)) << error;
-
-//    if (DEBUG_MODE) foo.CheckThatFoo();
-
     DLOG_EVERY_N(INFO, 1) << google::COUNTER << "/" << total << " HTTP blocked.";
-//    DLOG(INFO) << google::COUNTER << "blocked\n";
     for(i=0; i<DUMP_SIZE; i++) {
         printf("%02X ", pkt[i]);
         if(i==DUMP_SIZE-1 || (i && i%16==0)) puts("");
@@ -103,11 +87,8 @@ static uint32_t print_pkt (struct nfq_data *tb, uint8_t *NF_FLAG)
             *NF_FLAG = NF_DROP;
         }
     }
-//    printf("\nip_addr  = %X\ntcp_addr = %X\n",ip,tcp);
-//    printf("\nip->hl = %d\n",ip->ip_hl<<2);
     return id;
 }
-
 
 static int cb(struct nfq_q_handle *qh, struct nfgenmsg *nfmsg,
           struct nfq_data *nfa, void *data)
