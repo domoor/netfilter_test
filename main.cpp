@@ -17,15 +17,16 @@
 #define PORT_HTTP       80
 
 #define DUMP_FLAG       1
-#define DUMP_SIZE       20
+#define DUMP_SIZE       40
 
 void dump(uint8_t *pkt, uint32_t total){
     int i;
     DLOG_EVERY_N(INFO, 1) << google::COUNTER << "/" << total << " HTTP blocked.";
     for(i=0; i<DUMP_SIZE; i++) {
+	if(i && i%16==0) puts("");
         printf("%02X ", pkt[i]);
-        if(i==DUMP_SIZE-1 || (i && i%16==0)) puts("");
     }
+    puts("");
 }
 
 /* returns packet id */
@@ -81,10 +82,23 @@ static uint32_t print_pkt (struct nfq_data *tb, uint8_t *NF_FLAG)
 
     struct libnet_ipv4_hdr *ip = (struct libnet_ipv4_hdr*)data;
     if(ip->ip_v == IPv4 && ip->ip_p == PROTOCOL_TCP) {
-        struct libnet_tcp_hdr *tcp = (struct libnet_tcp_hdr*)((uint8_t*)ip + (ip->ip_hl<<2));
+	uint32_t ip_len = ip->ip_hl<<2;
+//        struct libnet_tcp_hdr *tcp = (struct libnet_tcp_hdr*)((uint8_t*)ip + (ip->ip_hl<<2));
+        struct libnet_tcp_hdr *tcp = (struct libnet_tcp_hdr*)((uint8_t*)ip + ip_len);
         if(ntohs(tcp->th_sport)==PORT_HTTP || ntohs(tcp->th_dport)==PORT_HTTP) {
-            if(DUMP_FLAG) dump((uint8_t*)data, id);
-            *NF_FLAG = NF_DROP;
+	    uint32_t tcp_len = tcp->th_off<<2;
+	    uint8_t *pl = (uint8_t*)tcp+tcp_len;
+	    uint32_t pl_len = ntohs(ip->ip_len)-ip_len-tcp_len;
+
+	    if(pl_len) {
+		    if(pl = (uint8_t*)strstr((char*)pl, "Host: "))
+			if(strstr((char*)pl,"test.gilgil.net")) {
+			        if(DUMP_FLAG&&pl_len>=DUMP_SIZE) dump((uint8_t*)pl, id);
+            			*NF_FLAG = NF_DROP;
+			}
+	    }
+//            if(DUMP_FLAG) dump((uint8_t*)data, id);
+//            *NF_FLAG = NF_DROP;
         }
     }
     return id;
